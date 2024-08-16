@@ -27,25 +27,57 @@ class LibroController{
     }
 
     async delete(req, res){
-      const libro = req.body;
-      
-    try{
-          const[result] = await pool.query(`DELETE FROM Libros WHERE isbn=(?)`, [libro.isbn]);
-      res.json({"libros Eliminados ":result.affectedRows});
+        const libro = req.body;
+        
+	    try{
+            const[result] = await pool.query(`DELETE FROM Libros WHERE isbn=(?)`, [libro.isbn]);
+		    res.json({"libros Eliminados ":result.affectedRows});
 
-    }catch (e){
-        console.log( e);
-      const Error = e.message;
-      res.status(400).json({Error });	
+	    }catch (e){
+	        console.log( e);
+		    const Error = e.message;
+		    res.status(400).json({Error });	
 
+	    }
     }
-  }
 
-  async update(req, res){
-    const Libros = req.body;
-    const [result] = await pool.query(`UPDATE Libros SET nombre=(?), autor=(?), categoria(?), año-publicacion(?), ISBN(?) WHERE id=(?)`, [Libros.nombre, Libros.autor, Libros.categoria, Libros.año-publicacion, Libros.ISBN, Libros.id]);
-    res.json({"Libros actualizados": result.changedRows});
-  }
+    
+    async update(req, res){
+        const libro = req.body;
+        
+	    try{
+            const [result] = await pool.query(`UPDATE Libros SET nombre=(?), autor=(?), categoria=(?), año_publicacion=(?), isbn=(?) WHERE id=(?)`, [libro.nombre, libro.autor, libro.categoria, libro.año_publicacion, libro.isbn, libro.id]);
+		    res.json({"libros actualizados ":result.changedRows});
+		
+		
+	    }catch (e){
+		
+	        console.log( e);
+		    const Error = e.message;
+		    res.status(400).json({Error });	
+	
+	    }
+    }
+    
+    async getOne(req, res){
+        
+        try {
+            const libro = req.body;
+            const id_libro = parseInt(libro.id);
+            const [result] = await pool.query(`SELECT * FROM Libros WHERE id=(?)`, [id_libro]);
+            
+            if (result[0]!=undefined){
+                res.json(result);
+            }else{
+                res.json({"Error": "No se ha encontrado un Libro con el id especificado"});
+            }
+        } catch(error){
+            
+            console.log('There was an error', error);
+        }
+        
+        
+    }
 }
 
-export const Libros = new LibrosController();
+export const libro = new LibroController();
